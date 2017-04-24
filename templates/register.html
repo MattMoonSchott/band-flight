@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}
+    Band-Flight
+{% endblock %}
+{% block content %}
+    <div class="back container-fluid">
+        <div class="row">
+            <h1 class="txt"> Welcome to Band-Flight! </h1>
+            <p class="txt">
+                The purpose of this web-app is to make discovering
+                new artists simpler!
+            </p>
+        </div>
+        <div class="row">
+            <h1 class="txt"> What's it all about?! </h1>
+            <p class="txt">
+                I'm glad you asked! Much like you can order a flight of drinks
+                at a bar to try a variety you may not have encountered before,
+                we hope to do the same here with music! Instead of putting alcohol
+                in your face, we'll be putting music in your ears!
+            </p>
+        </div>
+    </div>
+
+    <div class="container-fluid back">
+        <form action="/register" method="POST">
+               {{ form.username.label(class="txt") }}
+               {{ form.username(placeholder="username") }}
+                {% for error in form.username.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+               {{ form.password.label(class="txt") }}
+               {{ form.password(placeholder="Password", type="password") }}
+                {% for error in form.password.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+               {{ form.confirm.label(class="txt") }}
+               {{ form.confirm(placeholder="Retype Password", type="password") }}
+                {% for error in form.confirm.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+           <button type="submit" class="btn btn-default">Submit</button>
+        </form>
+    </div>
+
+{% endblock %}

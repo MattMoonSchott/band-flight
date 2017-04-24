@@ -1,0 +1,202 @@
+{% import 'macros.html' as macros %}
+{% extends 'base.html' %}
+{% block title %} Band-Flight: Results {% endblock %}
+
+{% block head %}
+{{ super()}}
+<link href="{{ url_for('static', filename='datepicker.css')}}" rel="stylesheet" type="text/css"/>
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<script>
+
+    $(function() {
+        $("#locale").autocomplete({
+            source: "{{url_for('autocomplete')}}",
+            create: function (e) {
+            $(this).prev('.ui-helper-hidden-accessible').remove();
+            },
+            messages: { noResults: '',
+            results: function() {}},
+            select: function(event, ui) {
+                $('#locale').val(ui.item.label);
+                $('#place').val(ui.item.value);
+                return false;
+            },
+            focus: function(event, ui) {
+                $("#locale").val(ui.item.label);
+                $('#locale').prop('readonly', true);
+                return false;
+            }
+        });
+    });
+
+    $("button#save-btn").click(function(){
+        var artist = $(this).parent().parent().children().find(".artist").text();
+        var venue = $(this).parent().parent().children().find(".venue").text();
+        var addr = $(this).parent().parent().children().find(".addr").text();
+        var date = $(this).parent().parent().children().find(".date").text();
+        var time = $(this).parent().parent().children().find(".time").text();
+        var link = $(this).parent().parent().children().find("a").attr("href");
+        var event = {
+            Artist: artist,
+            Venue: venue,
+            Addr: addr,
+            Date: date,
+            Time: time,
+            Link: link
+        };
+        $.ajax({
+            url: '/_addevent',
+            type: 'get',
+            dataType: 'json',
+            success: function (data) {
+            },
+            data: event
+        });
+        $(this).text("Data Submitted");
+        $(this).attr("disabled", true);
+    });
+
+    $(document).ready(function() {
+    $("#start").datepicker({
+        minDate: 0,
+        beforeShow: function() {
+            $('#ui-datepicker-div').css('z-index', 9999);
+        },
+        dateFormat: 'yy-mm-dd'
+    });
+    $("#end").datepicker({
+        beforeShow: function() {
+            var date = $("#start").datepicker('getDate');
+            $(this).datepicker('option', 'minDate', date);
+            $('#ui-datepicker-div').css('z-index', 9999);
+        },
+        dateFormat: "yy-mm-dd"
+    });
+});
+
+</script>
+{% endblock %}
+
+{% block content %}
+    {{ super() }}
+
+<div class="container-fluid back">
+    <form action="/results" method="POST" class="pure-form pure-form-aligned" id="search">
+        <fieldset>
+            <div class="pure-control-group">
+                {{ form.place.label(class="txt ") }}
+                {{ form.locale(class ="pure-input-rounded", Location="firstname", placeholder="Location") }}
+                {% for error in form.place.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </div>
+                {{ form.place(type="hidden") }}
+            <div class="pure-control-group">
+                {{ form.start.label(class="txt") }}
+                {{ form.start(class ="pure-input-rounded", placeholder="From yyyy-mm-dd") }}
+                {% for error in form.start.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </div>
+            <div class="pure-control-group">
+                {{ form.end.label(class="txt") }}
+                {{ form.end(class ="pure-input-rounded", placeholder="To yyyy-mm-dd") }}
+                {% for error in form.end.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </div>
+            <div class="pure-controls">
+                <button type="submit" class="btn btn-default">Submit</button>
+            </div>
+        </fieldset>
+    </form>
+</div>
+
+    {% with messages = get_flashed_messages(category_filter=['results']) %}
+        {% if messages %}
+        <div class="container-fluid back">
+            {% for message in messages %}
+                <h2 class="txt"> {{ message }} {{ place }} </h2>
+            {% endfor %}
+        </div>
+        {% endif %}
+    {% endwith %}
+
+{% if events %}
+
+<div class="container-fluid" id="results">
+        <h1 class="txt"> Concerts in {{ place }} from {{start}} to {{end}}</h1>
+        <h3 class="txt"> Page {{page}} </h3>
+</div>
+
+<div class="container-fluid">
+    {% for event in events %}
+        <div class="row jumbotron back" id="evnt-info">
+            <div class="col-md-6 center">
+                <div class="row txt">
+                    <h2 class="artist">{{event.name}}</h2>
+                </div>
+                <div class="row txt">
+                    <h3 class="venue">{{ event.venue }}</h3>
+                </div>
+                <div class="row txt">
+                    <h3 class="addr">{{ event.addr }}</h3>
+                </div>
+                <div class="row txt">
+                    <h3 class="date">{{ event.date }}</h3>
+                </div>
+                <div class="row txt">
+                    <h3 class="time">Doors: {{ event.time }}</h3>
+                </div>
+                <div class="row txt" id="tix-btn">
+                    <a href="{{ event.link }}">
+                        <button type="button" class="btn btn-primary btn-lg" >
+                            Find Tickets
+                        </button>
+                    </a>
+                </div>
+                <div class="row txt">
+                        <button id="save-btn" type="button" class="btn btn-primary  btn-lg" >
+                            Save for later
+                        </button>
+                </div>
+            </div>
+            <div class="col-md-6 center">
+                {% if event.onSpotify %}
+                    <div class="row" id="spot">
+                        {{ macros.render_event(event)}}
+                    </div>
+                {% else %}
+                    <div class="row txt" style="height: 80px;">
+                        <h3> Artist Not on Spotify </h3>
+                    </div>
+                    <div class="row" style="height: 250px;">
+                        <img src={{ url_for('static', filename='no_spot.jpg') }} height="250" width="250">
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+{% endif %}
+
+<div class="footer">
+    <ul class="pager">
+        {%  if prev %}
+            <li><a href={{prev}}>Previous</a></li>
+        {% endif %}
+        {% if next %}
+            <li><a href={{next}}>Next</a><li>
+        {% endif %}
+    </ul>
+</div>
+
+<div id="attrib">
+        <img src={{url_for('static', filename='sk_attrib.png')}} class='img-responsive img-rounded> style='height:40px;'>
+</div>
+    {% endblock %}
