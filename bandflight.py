@@ -1,13 +1,14 @@
 from flask import Flask, render_template, request, Response, redirect, flash, url_for, abort
 from flask_bootstrap import Bootstrap
 from flask.ext.login import LoginManager, login_required, login_user, current_user, logout_user
-from models import bcrypt, db, User, Events
+from models import *
 from SKapi import SKEvent, gig_find, place_find
 import Spotify
 from Validators import *
 import json, urllib
 from datetime import datetime
 from Forms import SKForm, Registration, LoginForm
+from functools import wraps
 
 # app instance
 app = Flask(__name__)
@@ -68,6 +69,17 @@ def load_user(user_id):
     way to obtain user from id.
     """
     return User.query.filter_by(id=user_id).first()
+
+
+def require_s_or_l(view_function):
+    @wraps(view_function)
+    # the new, post-decoration function. Note *args and **kwargs here.
+    def decorated_function(*args, **kwargs):
+        if current_user.name == 'Lauren' or current_user.name == 'Sunny':
+            return view_function(*args, **kwargs)
+        else:
+            abort(401,{'key_error': 'Unauthorized Access. Not Lauren or Sunny'})
+    return decorated_function
 
 
 @app.route('/')
@@ -340,6 +352,21 @@ def newpage(page=1):
         end = datetime.strptime(end, "%Y-%m-%d").strftime("%m-%d-%Y")
     return render_template('results.html', form=form, events=events, place = area, page=page, start=start, end=end, next=next_page, prev=prev)
 
+
+@app.route('/finance/add', methods=['POST', 'GET'])
+@login_required
+@require_s_or_l
+def finance_add():
+    form = Registration()
+    if request.method == 'POST':
+        # Use in-built validation from flask-wtforms
+        if form.validate_on_submit():
+            # check if user already exists
+            transaction = Transactions(request.form['username'].upper(), request.form['password'])
+            db.session.add(user)
+            db.session.commit()
+            return redirect(url_for('home'))
+    return render_template('register.html', form=form)
 
 @app.errorhandler(404)
 def not_found(error):

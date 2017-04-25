@@ -59,3 +59,48 @@ class Events(db.Model):
         self.date = date
         self.time = time
         self.link = link
+
+
+class Categories(db.Model):
+    __tablename__ = 'category'
+    id = db.Column(db.Integer, primary_key=True)
+    category = db.Column(db.String(40))
+
+    def init(self, id, category):
+        self.category
+
+
+class Source(db.Model):
+    __tablename__ = 'source'
+    id = db.Column(db.Integer, primary_key=True)
+    source = db.Column(db.String(40))
+
+
+class FinanceUsers(db.Model):
+    __tablename__ = 'fin_users'
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(100))
+
+
+class Transactions(db.Model):
+    __tablename__ = 'transaction'
+    id = db.Column(db.Integer, primary_key=True)
+    user = db.Column(db.Integer, db.ForeignKey('fin_users.id'))
+    source = db.Column(db.Integer, db.ForeignKey('source.id'))
+    category = db.Column(db.Integer, db.ForeignKey('category.id'))
+    amount = db.Column(db.Float)
+    date = db.Column(db.TIMESTAMP)
+
+    def init(self, user, source, category, amount, date):
+        self.user = user
+        self.source = source
+        self.category = category
+        self.amount = amount
+        self.date = date
+
+
+class Balances(db.Model):
+    __tablename__ = 'balance'
+    id = db.Column(db.Integer, primary_key=True)
+    account = db.Column(db.String(20))
+    balance = db.Column(db.Float)
