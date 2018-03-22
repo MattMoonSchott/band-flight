@@ -1,7 +1,8 @@
 import requests, json, urllib
 from datetime import datetime
+from config import SK_API_KEY
 
-API_KEY = "apikey=wVWWl5T2JQmUREhe"
+API_KEY = "apikey=" + SK_API_KEY
 
 
 # Event class, stores all info necessary for displaying an event
