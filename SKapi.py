@@ -45,6 +45,9 @@ def gig_find(page, start, end, location):
     data = json.loads(r.text)['resultsPage']
 
     # if there are no results return 0
+    if not data.get('results'):
+        events.append(0)
+        return events
     if len(data['results']) == 0:
         events.append(0)
         return events
