@@ -1,11 +1,14 @@
 import requests, json, urllib
+from config import client_id, client_secret
 
 def getTracks(events):
     for event in events:
         name = urllib.parse.quote(event.name)
-        header = {"Authorization" : "Bearer 44f10b7bf4cc45a39a55a7d3d96bc7de"}
+        authorization = base64.standard_b64encode(client_id + ':' + client_secret)
+
+        headers = {'Authorization' : 'Basic ' + authorization} 
         request = 'https://api.spotify.com/v1/search?q=' + name + '&type=artist'
-        request = requests.get(request, headers=header).text
+        request = requests.get(request, headers=headers).text
         results = json.loads(request).get('artists')
         if not results:
             print(request)
