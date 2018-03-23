@@ -1,22 +1,10 @@
-import requests, json, urllib
-from config import client_id, client_secret
-
-def getTracks(events):
+def getTracks(events, spotify):
     for event in events:
-        name = urllib.parse.quote(event.name)
-        authorization = base64.standard_b64encode(client_id + ':' + client_secret)
-
-        headers = {'Authorization' : 'Basic ' + authorization} 
-        request = 'https://api.spotify.com/v1/search?q=' + name + '&type=artist'
         request = requests.get(request, headers=headers).text
-        results = json.loads(request).get('artists')
-        if not results:
-            print(request)
-            return False
-        if results['total'] > 0:
+        results = spotify.search(q=event.name, type="artist", limit=1).get('artists')
+        if results['total']:
             id = results['items'][0]['id']
-            request = 'https://api.spotify.com/v1/artists/'+ id +'/top-tracks?country=US'
-            result = json.loads(requests.get(request).text)['tracks']
+            result = spotify.artist_top_tracks(id).get('tracks')
             if len(result) == 0:
                 continue
             event.settname(result[0]['name'])
