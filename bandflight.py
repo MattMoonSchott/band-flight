@@ -12,9 +12,6 @@ from functools import wraps
 from config import client_id, client_secret
 import requests, json, urllib
 
-SPOTIFY_APP_ID = client_id
-SPOTIFY_APP_SECRET = client_secret
-
 # app instance
 app = Flask(__name__)
 
@@ -33,10 +30,17 @@ bcrypt.init_app(app)
 # bootstrap instance
 bootstrap = Bootstrap(app)
 
-import base64
-auth = {'Authorization' : 'Basic ' + base64.standard_b64encode((client_id + ':' + client_secret).encode('ascii'))}
-auth_req = requests.post("https://accounts.spotify.com/api/token", headers=auth)
-print(auth_req.text)
+import requests
+
+grant_type = 'client_credentials'
+
+#Request body parameter: grant_type Value: Required. Set it to client_credentials
+body_params = {'grant_type' : grant_type}
+
+url='https://accounts.spotify.com/api/token'
+
+response=requests.post(url, data=body_params, auth = (client_id, client_secret)) 
+print response
     
 class SearchLink:
     def __init__(self):
