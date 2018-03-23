@@ -9,6 +9,11 @@ import json, urllib
 from datetime import datetime
 from Forms import SKForm, Registration, LoginForm
 from functools import wraps
+from config import client_id, client_secret
+import requests, json, urllib
+
+SPOTIFY_APP_ID = client_id
+SPOTIFY_APP_SECRET = client_secret
 
 # app instance
 app = Flask(__name__)
@@ -28,7 +33,11 @@ bcrypt.init_app(app)
 # bootstrap instance
 bootstrap = Bootstrap(app)
 
-
+import base64
+auth = {'Authorization' : 'Basic ' + base64.standard_b64encode(client_id + ':' + client_secret)}
+auth_req = requests.post("https://accounts.spotify.com/api/token", headers=auth)
+print(auth_req.text)
+    
 class SearchLink:
     def __init__(self):
         self.area = ""
