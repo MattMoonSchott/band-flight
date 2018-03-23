@@ -10,7 +10,7 @@ from datetime import datetime
 from Forms import SKForm, Registration, LoginForm
 from functools import wraps
 from config import client_id, client_secret
-import requests, json, urllib
+import spotipy.util as util
 
 # app instance
 app = Flask(__name__)
@@ -30,17 +30,9 @@ bcrypt.init_app(app)
 # bootstrap instance
 bootstrap = Bootstrap(app)
 
-import requests
-
-grant_type = 'client_credentials'
-
-#Request body parameter: grant_type Value: Required. Set it to client_credentials
-body_params = {'grant_type' : grant_type}
-
-url='https://accounts.spotify.com/api/token'
-
-response=requests.post(url, data=body_params, auth = (client_id, client_secret)) 
-print(response.text)
+token = util.oauth2.SpotifyClientCredentials(client_id=client_id, client_secret=client_secret)
+cache_token = token.get_access_token()
+print(cache_token
     
 class SearchLink:
     def __init__(self):
