@@ -40,7 +40,7 @@ body_params = {'grant_type' : grant_type}
 url='https://accounts.spotify.com/api/token'
 
 response=requests.post(url, data=body_params, auth = (client_id, client_secret)) 
-print response
+print(response.text)
     
 class SearchLink:
     def __init__(self):
