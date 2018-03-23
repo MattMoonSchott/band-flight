@@ -1,6 +1,5 @@
 def getTracks(events, spotify):
     for event in events:
-        request = requests.get(request, headers=headers).text
         results = spotify.search(q=event.name, type="artist", limit=1).get('artists')
         if results['total']:
             id = results['items'][0]['id']
