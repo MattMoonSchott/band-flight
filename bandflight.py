@@ -34,7 +34,7 @@ bcrypt.init_app(app)
 bootstrap = Bootstrap(app)
 
 import base64
-auth = {'Authorization' : 'Basic ' + base64.standard_b64encode(client_id + ':' + client_secret)}
+auth = {'Authorization' : 'Basic ' + base64.standard_b64encode((client_id + ':' + client_secret).encode('ascii'))}
 auth_req = requests.post("https://accounts.spotify.com/api/token", headers=auth)
 print(auth_req.text)
     
