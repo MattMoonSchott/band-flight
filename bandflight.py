@@ -32,7 +32,7 @@ bootstrap = Bootstrap(app)
 
 token = util.oauth2.SpotifyClientCredentials(client_id=client_id, client_secret=client_secret)
 cache_token = token.get_access_token()
-print(cache_token
+print(cache_token)
     
 class SearchLink:
     def __init__(self):
