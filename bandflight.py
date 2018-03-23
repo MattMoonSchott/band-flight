@@ -11,6 +11,7 @@ from Forms import SKForm, Registration, LoginForm
 from functools import wraps
 from config import client_id, client_secret
 import spotipy.util as util
+import spotipy
 
 # app instance
 app = Flask(__name__)
@@ -32,7 +33,7 @@ bootstrap = Bootstrap(app)
 
 token = util.oauth2.SpotifyClientCredentials(client_id=client_id, client_secret=client_secret)
 cache_token = token.get_access_token()
-print(cache_token)
+spotify = spotipy.Spotify(cache_token)
     
 class SearchLink:
     def __init__(self):
