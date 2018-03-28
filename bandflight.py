@@ -163,7 +163,7 @@ def saved():
         event = SKEvent(item.artist, item.date, item.time, 'N/A', item.venue, item.link, item.addr)
         events.append(event)
     # get all tracks related to it
-    Try:
+    try:
         Spotify.getTracks(events, spotify)
     Except spotipy.client.SpotifyException:
         spotify = spotipy.Spotify(spotify_access_token())
@@ -354,7 +354,7 @@ def newpage(page=1):
             next_page = ""
 
         # find the tracks and add them to the event objects
-        Try:
+        try:
             Spotify.getTracks(events, spotify)
         Except spotipy.client.SpotifyException:
             spotify = spotipy.Spotify(spotify_access_token())
