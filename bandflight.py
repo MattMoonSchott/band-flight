@@ -165,7 +165,7 @@ def saved():
     # get all tracks related to it
     try:
         Spotify.getTracks(events, spotify)
-    Except spotipy.client.SpotifyException:
+    except spotipy.client.SpotifyException:
         spotify = spotipy.Spotify(spotify_access_token())
         Spotify.getTracks(events, spotify)
     return render_template('saved.html', saved=events)
@@ -356,7 +356,7 @@ def newpage(page=1):
         # find the tracks and add them to the event objects
         try:
             Spotify.getTracks(events, spotify)
-        Except spotipy.client.SpotifyException:
+        except spotipy.client.SpotifyException:
             spotify = spotipy.Spotify(spotify_access_token())
             Spotify.getTracks(events, spotify)
         # commit the database session
