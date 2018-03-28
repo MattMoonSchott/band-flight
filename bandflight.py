@@ -31,9 +31,10 @@ bcrypt.init_app(app)
 # bootstrap instance
 bootstrap = Bootstrap(app)
 
-token = util.oauth2.SpotifyClientCredentials(client_id=client_id, client_secret=client_secret)
-cache_token = token.get_access_token()
-spotify = spotipy.Spotify(cache_token)
+def spotify_access_token(client_id=client_id, client_secret=client_secret):
+    token = util.oauth2.SpotifyClientCredentials(client_id=client_id, client_secret=client_secret)
+    return token.get_access_token()
+spotify = spotipy.Spotify(spotify_access_token())
     
 class SearchLink:
     def __init__(self):
@@ -162,7 +163,11 @@ def saved():
         event = SKEvent(item.artist, item.date, item.time, 'N/A', item.venue, item.link, item.addr)
         events.append(event)
     # get all tracks related to it
-    Spotify.getTracks(events, spotify)
+    Try:
+        Spotify.getTracks(events, spotify)
+    Except spotipy.client.SpotifyException:
+        spotify = spotipy.Spotify(spotify_access_token())
+        Spotify.getTracks(events, spotify)
     return render_template('saved.html', saved=events)
 
 
@@ -349,8 +354,11 @@ def newpage(page=1):
             next_page = ""
 
         # find the tracks and add them to the event objects
-        Spotify.getTracks(events, spotify)
-
+        Try:
+            Spotify.getTracks(events, spotify)
+        Except spotipy.client.SpotifyException:
+            spotify = spotipy.Spotify(spotify_access_token())
+            Spotify.getTracks(events, spotify)
         # commit the database session
         db.session.commit()
 
