@@ -358,22 +358,6 @@ def newpage(page=1):
         end = datetime.strptime(end, "%Y-%m-%d").strftime("%m-%d-%Y")
     return render_template('results.html', form=form, events=events, place = area, page=page, start=start, end=end, next=next_page, prev=prev)
 
-
-@app.route('/finance/add', methods=['POST', 'GET'])
-@login_required
-@require_s_or_l
-def finance_add():
-    form = Registration()
-    if request.method == 'POST':
-        # Use in-built validation from flask-wtforms
-        if form.validate_on_submit():
-            # check if user already exists
-            transaction = Transactions(request.form['username'].upper(), request.form['password'])
-            db.session.add(user)
-            db.session.commit()
-            return redirect(url_for('home'))
-    return render_template('register.html', form=form)
-
 @app.errorhandler(404)
 def not_found(error):
     """
