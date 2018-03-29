@@ -19,6 +19,9 @@ class SKEvent:
         self.link = link
 
     def isonSpotify(self):
+        """
+        Flag used in jinja template to ensure spotify sample renders correctly.
+        """
         self.onSpotify = True
 
     def __repr__(self):
@@ -32,8 +35,9 @@ class SKEvent:
 
 
 def gig_find(page, start, end, location):
-
-    # builds a query to the songkick api to find concerts according to search
+    """
+    builds a query to the songkick api to find concerts according to search
+    """
     base = "http://api.songkick.com/api/3.0/events.json?"
     api = API_KEY
     start = "&min_date=" + start
@@ -84,7 +88,9 @@ def gig_find(page, start, end, location):
 
 
 def place_find(term="Boston"):
-    # find the location id
+    """
+    find the location id
+    """
     base = "http://api.songkick.com/api/3.0/search/locations.json?"
     api = API_KEY
     location = "&query=" + urllib.parse.quote(term)
@@ -116,10 +122,15 @@ def place_find(term="Boston"):
 
 
 def get_addr(id):
-    # find the address of the venue
+    """ 
+    find the address of the venue
+    """
     top = 'http://api.songkick.com/api/3.0/venues/'
     bottom = '.json?' + API_KEY
     query = top + str(id) + bottom
-    r = json.loads(requests.get(query).text)['resultsPage']['results']['venue']
+    r = json.loads(requests.get(query).text).get('resultsPage')
+    if not r:
+        return "Address Unavailable"
+    r = r['results']['venue']
     venue = r['street'] + ", " + r['city']['displayName']
     return venue
