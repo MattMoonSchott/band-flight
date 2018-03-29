@@ -1,9 +1,11 @@
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.bcrypt import Bcrypt
 
+#initialize sqlalchemy instance and Bcrypt
 db = SQLAlchemy()
 bcrypt = Bcrypt()
 
+# define user including last search information
 class User(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
@@ -39,7 +41,7 @@ class User(db.Model):
     def __repr__(self):
         return '<User %r>' % self.username
 
-
+#define a saved event
 class Events(db.Model):
     __tablename__ = 'saved'
     id = db.Column(db.Integer, primary_key=True)
@@ -59,48 +61,31 @@ class Events(db.Model):
         self.date = date
         self.time = time
         self.link = link
+        
 
+# define a class for search links, not a database class but used in bandflight.py for get requests
+class SearchLink:
+    def __init__(self):
+        self.area = ""
+        self.place = ""
+        self.start = ""
+        self.end = ""
 
-class Categories(db.Model):
-    __tablename__ = 'category'
-    id = db.Column(db.Integer, primary_key=True)
-    category = db.Column(db.String(40))
+    def set_area(self, area):
+        self.area = str(area)
 
-    def init(self, id, category):
-        self.category
+    def set_place(self, pid):
+        self.place = str(pid)
 
+    def set_start(self, start):
+        self.start = str(start)
 
-class Source(db.Model):
-    __tablename__ = 'source'
-    id = db.Column(db.Integer, primary_key=True)
-    source = db.Column(db.String(40))
+    def set_end(self, end):
+        self.end = str(end)
 
-
-class FinanceUsers(db.Model):
-    __tablename__ = 'fin_users'
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(100))
-
-
-class Transactions(db.Model):
-    __tablename__ = 'transaction'
-    id = db.Column(db.Integer, primary_key=True)
-    user = db.Column(db.Integer, db.ForeignKey('fin_users.id'))
-    source = db.Column(db.Integer, db.ForeignKey('source.id'))
-    category = db.Column(db.Integer, db.ForeignKey('category.id'))
-    amount = db.Column(db.Float)
-    date = db.Column(db.TIMESTAMP)
-
-    def init(self, user, source, category, amount, date):
-        self.user = user
-        self.source = source
-        self.category = category
-        self.amount = amount
-        self.date = date
-
-
-class Balances(db.Model):
-    __tablename__ = 'balance'
-    id = db.Column(db.Integer, primary_key=True)
-    account = db.Column(db.String(20))
-    balance = db.Column(db.Float)
+    def get_link(self):
+        area = "?area=" + urllib.parse.quote(self.area)
+        place = "&id=" + urllib.parse.quote(self.place)
+        start = "&start=" + urllib.parse.quote(self.start)
+        end = "&end=" + urllib.parse.quote(self.end)
+        return '/results' + area + place + start + end
