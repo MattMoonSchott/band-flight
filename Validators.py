@@ -1,5 +1,8 @@
 from datetime import datetime
 
+"""
+Custom validators used for form validation.
+"""
 
 def page_valid(page):
     return page.isdigit()
