@@ -31,43 +31,12 @@ bcrypt.init_app(app)
 # bootstrap instance
 bootstrap = Bootstrap(app)
 
+# initialize spotify authorization object
 token = util.oauth2.SpotifyClientCredentials(client_id=client_id, client_secret=client_secret)
 
+# define function for refreshing token (only fetches a new token if the old one has expired).
 def spotify_access_token(client_id=client_id, client_secret=client_secret):
     return token.get_access_token()
-    
-class SearchLink:
-    def __init__(self):
-        self.area = ""
-        self.place = ""
-        self.start = ""
-        self.end = ""
-
-    def set_area(self, area):
-        self.area = str(area)
-
-    def set_place(self, pid):
-        self.place = str(pid)
-
-    def set_start(self, start):
-        self.start = str(start)
-
-    def set_end(self, end):
-        self.end = str(end)
-
-    def get_link(self):
-        area = "?area=" + urllib.parse.quote(self.area)
-        place = "&id=" + urllib.parse.quote(self.place)
-        start = "&start=" + urllib.parse.quote(self.start)
-        end = "&end=" + urllib.parse.quote(self.end)
-        return '/results' + area + place + start + end
-
-"""
-@app.before_request
-def before_request():
-    return render_template('construct.html')
-"""
-
 
 @lm.user_loader
 def load_user(user_id):
@@ -76,17 +45,6 @@ def load_user(user_id):
     way to obtain user from id.
     """
     return User.query.filter_by(id=user_id).first()
-
-
-def require_s_or_l(view_function):
-    @wraps(view_function)
-    # the new, post-decoration function. Note *args and **kwargs here.
-    def decorated_function(*args, **kwargs):
-        if current_user.name == 'Lauren' or current_user.name == 'Sunny':
-            return view_function(*args, **kwargs)
-        else:
-            abort(401,{'key_error': 'Unauthorized Access. Not Lauren or Sunny'})
-    return decorated_function
 
 
 @app.route('/')
