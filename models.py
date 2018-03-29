@@ -1,5 +1,6 @@
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.bcrypt import Bcrypt
+import urllib
 
 #initialize sqlalchemy instance and Bcrypt
 db = SQLAlchemy()
