@@ -31,8 +31,9 @@ bcrypt.init_app(app)
 # bootstrap instance
 bootstrap = Bootstrap(app)
 
+token = util.oauth2.SpotifyClientCredentials(client_id=client_id, client_secret=client_secret)
+
 def spotify_access_token(client_id=client_id, client_secret=client_secret):
-    token = util.oauth2.SpotifyClientCredentials(client_id=client_id, client_secret=client_secret)
     return token.get_access_token()
     
 class SearchLink:
