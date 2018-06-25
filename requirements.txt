@@ -8,4 +8,4 @@ WTForms==2.1
 flask-login==0.4.1
 flask-bcrypt
 flask-sqlalchemy==2.3
-mysql-connect-python
+mysqlclient
