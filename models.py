@@ -1,10 +1,9 @@
 from flask.ext.sqlalchemy import SQLAlchemy
-from flask.ext.bcrypt import Bcrypt
+from werkzeug.security import generate_password_hash, check_password_hash
 import urllib
 
 #initialize sqlalchemy instance and Bcrypt
 db = SQLAlchemy()
-bcrypt = Bcrypt()
 
 # define user including last search information
 class User(db.Model):
@@ -21,7 +20,7 @@ class User(db.Model):
 
     def __init__(self , username , password):
         self.username = username
-        self.hash = bcrypt.generate_password_hash(password)
+        self.hash = generate_password_hash(password)
 
     def is_active(self):
         """All users are active but this is a Flask-Login requirement"""

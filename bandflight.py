@@ -26,7 +26,6 @@ lm.login_view = "login"
 
 # initialise mySQL database and  bcrypt with app instance
 db.init_app(app)
-bcrypt.init_app(app)
 
 # bootstrap instance
 bootstrap = Bootstrap(app)
@@ -92,7 +91,7 @@ def login():
         user = User.query.filter_by(username=form.username.data.upper()).first()
         if user:
             # use bcrypt to check the password
-            if bcrypt.check_password_hash(user.hash, form.password.data):
+            if check_password_hash(user.hash, form.password.data):
                 login_user(user, remember=True)
                 return redirect(url_for('home'))
         flash("Either Password or Username Incorrect")

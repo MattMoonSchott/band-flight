@@ -6,6 +6,6 @@ flask_bootstrap==3.3.7.1
 flask_wtf==0.14.2
 WTForms==2.1
 flask-login==0.4.1
-flask-bcrypt
+werkzeug
 flask-sqlalchemy==2.3
 mysqlclient
